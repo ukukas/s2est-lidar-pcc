@@ -42,7 +42,11 @@ download_laz <- function(epkid, year) {
   return(file)
 }
 
-process_chunk <- function(chunk, year, template, fldr, tile, res) {
+process_chunk <- function(chunk, year, template, fldr, tile, res, ow) {
+  out_name <- base::sprintf('%s/grdtbl_%i_%s_%im_%s.csv',
+                            fldr, year, tile, res,
+                            base::paste0(chunk, collapse = '_'))
+  if (fs::file_exists(out_name) & !ow) return(FALSE)
   files <- base::sapply(chunk, function(x) download_laz(x, year))
   pts <- rlas::read.las(files, select = 'c',
                         filter = '-first_only -keep_class 2 5 6 9 17') %>%
@@ -59,16 +63,14 @@ process_chunk <- function(chunk, year, template, fldr, tile, res) {
                      flag = base::sum(base::as.integer(classno == 5)),
                      .groups = 'keep') %>%
     dplyr::ungroup() %>%
-    readr::write_csv(base::sprintf('%s/grdtbl_%i_%s_%im_%s.csv',
-                                   fldr, year, tile, res,
-                                   base::paste0(chunk, collapse = '_')))
+    readr::write_csv(out_name)
   fs::file_delete(files)
   base::rm(files, pts)
   base::gc()
   return(TRUE)
 }
 
-process_chunks <- function(cores, chunks, template, fldr, year, tile, res) {
+process_chunks <- function(cores, chunks, template, fldr, year, tile, res, ow) {
   cl <- parallel::makePSOCKcluster(cores)
   doParallel::registerDoParallel(cl)
   plyr::llply(
@@ -79,6 +81,7 @@ process_chunks <- function(cores, chunks, template, fldr, year, tile, res) {
     year = year,
     tile = tile,
     res = res,
+    ow = ow,
     .parallel = TRUE,
     .paropts = base::list(
       .packages = base::c('magrittr', 'fs', 'httr', 'rlas', 'dplyr',
@@ -95,12 +98,13 @@ main <- function() {
   res <- 10
   year <- 2018
   nchunk <- 1
-  sample <- 0.1
+  sample <- 1
+  ow <- FALSE
   outdir <- base::sprintf('results_%i_%s_%im', year, tile, res)
   fs::dir_create(outdir)
   template <- read_template(tile, res)
   chunks <- create_cunks(tile, year, nchunk, sample)
-  process_chunks(cores, chunks, template, outdir, year, tile, res) %>%
+  process_chunks(cores, chunks, template, outdir, year, tile, res, ow) %>%
     base::invisible()
   return(TRUE)
 }
