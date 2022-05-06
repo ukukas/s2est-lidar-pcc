@@ -41,8 +41,8 @@ main <- function() {
     year <- 2018
     tile <- '35VLF'
     tresh <- 1
-    cluster <- 'FORK'
-    read_files() %>% combine_and_write()
+    ctype <- 'FORK'
+    read_files(ctype, cores, year, tile) %>% combine_and_write(cores)
     return(TRUE)
 }
 
