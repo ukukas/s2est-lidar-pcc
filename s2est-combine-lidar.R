@@ -38,7 +38,7 @@ data %<>% dplyr::mutate(P = base::as.integer(base::ceiling(P/2)),
 base::rm(cl)
 base::gc()
 
-template <- base::sprintf('*T%s_*_AOT_20m.jp2', tile, year) %>%
+template <- base::sprintf('*T%s_*_AOT_20m.jp2', tile) %>%
     fs::dir_ls(recurse = TRUE, glob = .) %>%
     terra::rast()
 
