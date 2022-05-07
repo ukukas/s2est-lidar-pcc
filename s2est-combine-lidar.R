@@ -18,7 +18,7 @@ read_files <- function(ctype, cores, year, tile) {
     return(data)
 }
 
-combine_and_write <- function(data, cores) {
+combine_and_write <- function(data, cores, tresh, year, tile) {
     cl <- multidplyr::new_cluster(cores)
     data %>% dplyr::mutate(P = base::as.integer(base::ceiling(P/2)),
                             L = base::as.integer(base::ceiling(L/2))) %>%
@@ -37,12 +37,13 @@ combine_and_write <- function(data, cores) {
 }
 
 main <- function() {
-    cores <- parallel::detectCores()
+    cores <- parallel::detectCores() -1
     year <- 2018
     tile <- '35VLF'
     tresh <- 1
-    ctype <- 'FORK'
-    read_files(ctype, cores, year, tile) %>% combine_and_write(cores)
+    ctype <- 'PSOCK'
+    read_files(ctype, cores, year, tile) %>%
+        combine_and_write(cores, tresh, year, tile)
     return(TRUE)
 }
 
