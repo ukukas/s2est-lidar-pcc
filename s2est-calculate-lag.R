@@ -1,4 +1,4 @@
-librarian::shelf(magrittr, readr, dplyr)
+librarian::shelf(magrittr, readr, dplyr, multidplyr, parallel)
 
 read_table <- function(year, tile, res, minfrac) {
     base::sprintf('grdtbl_%i_%s_%im.csv', year, tile, res) %>%
