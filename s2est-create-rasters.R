@@ -43,3 +43,5 @@ main <- function() {
         save_raster('flag', template, tile, year)
     return(TRUE)
 }
+
+main()

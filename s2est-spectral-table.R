@@ -43,3 +43,5 @@ main <- function() {
     generate_table(bands, scl, tile, year)
     return(TRUE)
 }
+
+main()
