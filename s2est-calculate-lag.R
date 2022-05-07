@@ -17,7 +17,7 @@ get_lag <- function(table, dist, refP, refL){
         return()
 }
 
-calcluate_lag <- function(table, dist, cores, lagfunc) {
+calculate_lag <- function(table, dist, cores, lagfunc) {
     cl <- multidplyr::new_cluster(cores)
     multidplyr::cluster_library(cl, c('magrittr', 'dplyr'))
     multidplyr::cluster_copy(cl, c('lagfunc', 'table'))
