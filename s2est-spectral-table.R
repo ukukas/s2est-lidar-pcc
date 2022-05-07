@@ -26,12 +26,12 @@ generate_table <- function(bands, scl, tile, year) {
                 datatype = 'INT2U',
                 NAflag = 0) %>%
         base::as.data.frame(xy = FALSE, cells = TRUE, na.rm = TRUE) %>%
-        dplyr::mutate(P = terra::colFromCell(cell),
-                      L = terra::rowFromCell(cell)) %>%
+        dplyr::mutate(P = terra::colFromCell(scl, cell),
+                      L = terra::rowFromCell(scl, cell)) %>%
         dplyr::mutate_at(dplyr::vars(dplyr::starts_with('B')),
                          function(x) x / 10000) %>%
         dplyr::select(cell, P, L, dplyr::starts_with('B')) %>%
-        readr::write_csv(base::sprintf('*bndtbl_%d_%s_20m.csv', year, tile))
+        readr::write_csv(base::sprintf('bndtbl_%d_%s_20m.csv', year, tile))
     return(TRUE)
 }
 
