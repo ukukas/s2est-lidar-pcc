@@ -2,7 +2,7 @@ librarian::shelf(magrittr, parallel, doParallel, fs,
                  plyr, readr, dplyr, multidplyr)
 
 read_files <- function(ctype, cores, year, tile) {
-    cl <- parallel::makeCluster(ctype, cores)
+    cl <- parallel::makeCluster(cores, ctype)
     doParallel::registerDoParallel(cl)
     data <- base::sprintf('*grdtbl_%i_%s*_10m_*.csv', year, tile) %>%
         fs::dir_ls(recurse = TRUE, glob = .) %>%
@@ -37,7 +37,7 @@ combine_and_write <- function(data, cores) {
 }
 
 main <- function() {
-    cores <- parallel::detectCores() - 1
+    cores <- parallel::detectCores()
     year <- 2018
     tile <- '35VLF'
     tresh <- 1
