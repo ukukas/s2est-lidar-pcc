@@ -1,7 +1,7 @@
 librarian::shelf(magrittr, readr, dplyr, parallel, multidplyr)
 
 read_table <- function(year, tile, res, minfrac) {
-    base::sprintf('pcctbl_%i_%s_%im.csv', year, tile, res) %>%
+    base::sprintf('grdtbl_%i_%s_%im.csv', year, tile, res) %>%
         readr::read_csv(col_names = TRUE, col_types = 'iiiid') %>%
         dplyr::filter(total > res^2 * minfrac) %>%
         return()
