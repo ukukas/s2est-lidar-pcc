@@ -16,8 +16,8 @@ read_bnd <- function(year, tile, res) {
 combine_tables <- function(pcctbl, bndtbl) {
     pcctbl %>%
         dplyr::inner_join(bndtbl, by = c('P', 'L')) %>%
-        dplyr::select(cell, P, L, total, flag,
-                      dplyr::any_of('pcc'),
+        dplyr::select(cell, P, L, total, flag, pcc,
+                      dplyr::any_of('lag'),
                       dplyr::starts_with('B')) %>%
         return()
 }
