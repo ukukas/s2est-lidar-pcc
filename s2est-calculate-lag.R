@@ -7,7 +7,7 @@ read_table <- function(year, tile, res, minfrac) {
         return()
 }
 
-calculate_lag <- function(table) {
+calculate_lag <- function(table, cl) {
     table %<>% dplyr::select(P, L, pcc)
     dplyr::bind_rows(dplyr::mutate(table, P=P-1, L=L-1),
                      dplyr::mutate(table, P=P-1),
@@ -18,7 +18,10 @@ calculate_lag <- function(table) {
                      dplyr::mutate(table, P=P+1),
                      dplyr::mutate(table, P=P+1, L=L+1)) %>%
         dplyr::group_by(P, L) %>%
+        multidplyr::partition(cl) %>%
         dplyr::summarise(lag = base::mean(pcc)) %>%
+        dplyr::collect() %>%
+        dplyr::ungroup() %>%
         return()
 }
 
@@ -27,10 +30,14 @@ main <- function() {
     tile <- '35VLF'
     res <- 20
     minfrac <- 0.1
+    cores <- parallel::detectCores() - 1
+    cl <- multidplyr::new_cluster(cores)
     read_table(year, tile, res, minfrac) %>%
-        dplyr::inner_join(calculate_lag(.)) %>%
+        dplyr::inner_join(calculate_lag(., cl)) %>%
         readr::write_csv(
             base::sprintf('pcctbl_%i_%s_%im.csv', year, tile, res))
+    base::rm(cl)
+    base::gc()
     return(TRUE)
 }
 

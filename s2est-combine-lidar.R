@@ -37,7 +37,7 @@ combine_and_write <- function(data, cores, tresh, year, tile) {
 }
 
 main <- function() {
-    cores <- parallel::detectCores() -1
+    cores <- parallel::detectCores() - 1
     year <- 2018
     tile <- '35VLF'
     tresh <- 1
